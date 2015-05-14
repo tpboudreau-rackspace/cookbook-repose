@@ -18,7 +18,8 @@ template "#{node['repose']['config_directory']}/rackspace-auth-user.cfg.xml" do
   mode '0644'
   variables(
     :v1_1 => node['repose']['rackspace_auth_user']['v1_1'],
-    :v2_0 => node['repose']['rackspace_auth_user']['v2_0']
+    :v2_0 => node['repose']['rackspace_auth_user']['v2_0'],
+    :version => node['repose']['version']
   )
   notifies :restart, 'service[repose-valve]'
 end
