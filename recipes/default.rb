@@ -32,6 +32,7 @@ service_cluster_map = {
 
 filters = node['repose']['filters']
 filter_cluster_map = {
+  'add-header'            => node['repose']['add_header'           ]['cluster_id'],
   'api-validator'         => node['repose']['api_validator'        ]['cluster_id'],
   'client-auth'           => node['repose']['client_auth'          ]['cluster_id'],
   'content-type-stripper' => node['repose']['content_type_stripper']['cluster_id'],
@@ -80,7 +81,9 @@ template "#{node['repose']['config_directory']}/log4j2.xml" do
   group node['repose']['group']
   mode '0644'
   variables(
-    loglevel: node['repose']['loglevel']
+    loglevel: node['repose']['loglevel'],
+    openrepose_loglevel: node['repose']['openrepose_loglevel'],
+    intrafilter_loglevel: node['repose']['intrafilter_loglevel']
   )
   notifies :restart, 'service[repose-valve]'
 end

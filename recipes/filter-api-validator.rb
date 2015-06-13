@@ -20,6 +20,7 @@ template "#{node['repose']['config_directory']}/validator.cfg.xml" do
     :wadl => node['repose']['api_validator']['wadl'],
     :dot_output => node['repose']['api_validator']['dot_output'],
     :enable_rax_roles => node['repose']['api_validator']['enable_rax_roles'],
+    :enable_api_coverage => node['repose']['api_validator']['enable_api_coverage']
   )
   notifies :restart, 'service[repose-valve]'
 end

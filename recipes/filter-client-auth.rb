@@ -31,7 +31,8 @@ template "#{node['repose']['config_directory']}/client-auth-n.cfg.xml" do
     :group_cache_timeout => node['repose']['client_auth']['group_cache_timeout'],
     :endpoints_in_header => node['repose']['client_auth']['endpoints_in_header'],
     :white_list => node['repose']['client_auth']['white_list'],
-    :uri_regex => node['repose']['client_auth']['uri_regex']
+    :uri_regex => node['repose']['client_auth']['uri_regex'],
+    :version => node['repose']['version']
   )
   notifies :restart, 'service[repose-valve]'
 end

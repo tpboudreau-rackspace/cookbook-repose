@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<add-headers xmlns="http://docs.openrepose.org/repose/add-header/v1.0">
+   <% if !@request_headers.empty? %>
+    <request>
+		<% @request_headers.each do |header| %>
+        <header 
+		   name="<%= header['name'] %>"
+		   <% if header.has_key? 'quality' %> 
+		   quality="<%= header['quality'] %>" 
+		   <% end %>
+		   <% if header.has_key? 'overwrite' %>
+		   overwrite="<%= header['overwrite'] %>"
+		   <% end %>
+		   ><%= header['value'] %></header>
+		<% end %>
+    </request>
+   <% end %>
+
+   <% if !@response_headers.empty? %>
+    <response>
+		<% @response_headers.each do |header| %>
+        <header 
+		   name="<%= header['name'] %>"
+		   <% if header.has_key? 'quality' %> 
+		   quality="<%= header['quality'] %>" 
+		   <% end %>
+		   <% if header.has_key? 'overwrite' %>
+		   overwrite="<%= header['overwrite'] %>"
+		   <% end %>
+		   ><%= header['value'] %></header>
+		<% end %>
+    </response>
+   <% end %>
+</add-headers>
