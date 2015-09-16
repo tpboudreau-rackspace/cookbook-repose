@@ -22,8 +22,8 @@ default['repose']['loglevel'] = 'DEBUG'
 default['repose']['cluster_ids'] = ['repose']
 default['repose']['rewrite_host_header'] = true
 default['repose']['node_id'] = 'repose_node1'
-default['repose']['port'] = 8080
-default['repose']['ssl_port'] = 8443
+default['repose']['port'] = 7000
+default['repose']['ssl_port'] = 7443
 default['repose']['shutdown_port'] = 8188
 default['repose']['connection_timeout'] = 30000
 default['repose']['read_timeout'] = 30000
@@ -42,19 +42,19 @@ default['repose']['peers'] = [
   { 'cluster_id' => 'repose',
     'id' => 'repose_node1',
     'hostname' => 'localhost',
-    'port' => 8080,
+    'port' => 7000,
   }
 ]
 
-default['repose']['filters'] = []
+default['repose']['filters'] = ['header-normalization','keystone-v2','extract-device-id','valkyrie-authorization','merge-header']
 default['repose']['services'] = []
 
 default['repose']['endpoints'] = [
   { 'cluster_id' => 'repose',
-    'id' => 'open_repose',
+    'id' => 'api0',
     'protocol' => 'http',
-    'hostname' => 'openrepose.org',
-    'port' => 80,
+    'hostname' => 'localhost',
+    'port' => 7010,
     'root_path' => '/',
     'default' => true,
   }
@@ -85,20 +85,31 @@ default['repose']['derp']['cluster_id'] = ['all']
 default['repose']['content_type_stripper']['cluster_id'] = ['all']
 
 default['repose']['header_normalization']['cluster_id'] = ['all']
-default['repose']['header_normalization']['whitelist'] = [
-  { 'id' => 'credentials',
-    'uri_regex' => '/servers/(.*)',
-    'headers'   => ['X-Auth-Key','X-Auth-User']
-  },
-  { 'id' => 'modification',
-    'uri_regex' => '/resource/(.*)',
-    'http_methods' => 'PUT POST',
-    'headers'   => ['X-Modify']
-  }
-]
+default['repose']['header_normalization']['uri_regex'] = nil
+default['repose']['header_normalization']['whitelist'] = []
 default['repose']['header_normalization']['blacklist'] = [
-  { 'id' => 'rate-limit-headers',
-    'headers'   => ['X-PP-User','X-PP-Groups']
+  { 'id' => 'authorization',
+    'http_methods' => 'ALL',
+    'headers' => [
+      'X-Authorization',
+      'X-Token-Expires',
+      'X-Identity-Status',
+      'X-Impersonator-Id',
+      'X-Impersonator-Name',
+      'X-Impersonator-Roles',
+      'X-Roles',
+      'X-Contact-Id',
+      'X-Device-Id',
+      'X-User-Id',
+      'X-User-Name',
+      'X-PP-User',
+      'X-PP-Groups',
+      'X-Catalog',
+      'X-Subject-Token',
+      'X-Subject-Name',
+      'X-Subject-ID',
+      'X-Support-Token'
+    ]
   }
 ]
 
@@ -212,3 +223,37 @@ default['repose']['api_validator']['cluster_id'] = ['all']
 default['repose']['api_validator']['enable_rax_roles'] = true
 default['repose']['api_validator']['wadl'] = nil
 default['repose']['api_validator']['dot_output'] = nil
+
+default['repose']['keystone_v2']['cluster_id'] = ['all']
+default['repose']['keystone_v2']['uri_regex'] = nil
+default['repose']['keystone_v2']['identity_username'] = 'identity_username'
+default['repose']['keystone_v2']['identity_password'] = 'identity_p4ssw0rd'
+default['repose']['keystone_v2']['identity_uri'] = 'http://identity.api.example.com' # 'https://staging.identity.api.rackspacecloud.com' 'https://identity.api.rackspacecloud.com'
+default['repose']['keystone_v2']['identity_set_roles'] = true
+default['repose']['keystone_v2']['identity_set_groups'] = false
+default['repose']['keystone_v2']['identity_set_catalog'] = false
+default['repose']['keystone_v2']['whitelist_uri_regex'] = '.*/v1.0/(\d+|[a-zA-Z]+:\d+)/agent_installers/.+(\.sh)?'
+default['repose']['keystone_v2']['tenant_uri_extraction_regex'] = '.*/v1.0/(\d+|[a-zA-Z]+:\d+)/.+'
+default['repose']['keystone_v2']['preauthorized_service_admin_role'] = nil
+default['repose']['keystone_v2']['token_timeout_variability'] = 15
+default['repose']['keystone_v2']['token_timeout'] = 600
+
+default['repose']['extract_device_id']['cluster_id'] = ['all']
+default['repose']['extract_device_id']['uri_regex'] = '.*/hybrid:\d+/entities/.*'
+default['repose']['extract_device_id']['maas_service_uri'] = 'http://localhost:7010'
+default['repose']['extract_device_id']['cache_timeout_millis'] = 60000
+default['repose']['extract_device_id']['delegating_quality'] = nil
+
+default['repose']['valkyrie_authorization']['cluster_id'] = ['all']
+default['repose']['valkyrie_authorization']['uri_regex'] = '.*/hybrid:\d+/(?!agent_installers/).*'
+default['repose']['valkyrie_authorization']['cache_timeout_millis'] = 60000
+default['repose']['valkyrie_authorization']['enable_masking_403s'] = true
+default['repose']['valkyrie_authorization']['delegating_quality'] = nil
+default['repose']['valkyrie_authorization']['valkyrie_server_uri'] = 'http://valkyrie.my.example.com' #'https://valkyrie.staging.myrs.rackspace.com', 'https://valkyrie.my.rackspace.com'
+default['repose']['valkyrie_authorization']['valkyrie_server_username'] = 'username'
+default['repose']['valkyrie_authorization']['valkyrie_server_password'] = 'p4ssw0rd'
+
+default['repose']['merge_header']['cluster_id'] = ['all']
+default['repose']['merge_header']['uri_regex'] = nil
+default['repose']['merge_header']['headers'] = ['X-Roles','X-Impersonator-Roles']
+

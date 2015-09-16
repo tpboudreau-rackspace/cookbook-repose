@@ -14,10 +14,21 @@
               <% end %>
             <% end %>
         </nodes>
+		<!--
+            <filter name="header-normalization" />
+            <filter name="keystone-v2" />
+            <filter name="extract-device-id" uri-regex=".*/hybrid:\d+/entities/.*" />
+            <filter name="valkyrie-authorization" uri-regex=".*/hybrid:\d+/(?!agent_installers/).*" />
+            <filter name="merge-header" />
+		-->
         <filters>
             <% @filters.each do |filter| %>
               <% if @filter_cluster_map[filter].include?('all') || @filter_cluster_map[filter].include?(cluster_id) %>
-            <filter name="<%= filter %>" />
+            <filter name="<%= filter %>"
+                  <% unless @filter_uri_regex_map[filter].nil? %>
+                  uri-regex="<%= @filter_uri_regex_map[filter] %>"
+                  <% end %>
+            />
               <% end %>
             <% end %>
         </filters>
